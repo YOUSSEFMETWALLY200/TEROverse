@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="https://i.ibb.co/hddN9xV/Firefly-Logo-worm-and-its-name-is-tero-2720-removebg-preview.png" type="">
+  <title>Tero Verse</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: url('https://i.ibb.co/KbZXY8W/tero-verse-1.png');
+      background-size: cover;
+    }
+
+    .game-area {
+      position: relative;
+      width: 900px;
+      height: 650px;
+      border: 4px solid #000;
+      background-image: url('https://i.ibb.co/2kF7r40/Custom-dimensions-900x650-px.png');
+      background-size: cover;
+    }
+
+    .snake {
+      width: 20px;
+      height: 20px;
+      background-image: url('https://i.ibb.co/Bng63Lx/Custom-dimensions-180x180-px-2.png');
+      background-size: cover;
+      position: absolute;
+    }
+
+    .food {
+      width: 25px;
+      height: 25px;
+      position: absolute;
+      background-image: url('https://i.ibb.co/N3hGzXR/Pngtree-apple-fruit-realistic-design-5099732.png');
+      background-size: cover;
+    }
+    
+    .score {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      width: 150px; 
+      height: 70px; 
+      background-image:url('https://i.ibb.co/k1W7fBM/score-2.png');
+      background-size: cover;
+      padding: 10px;
+      border: 5px solid 	rgba(255, 255, 255, 0.66);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .score p {
+      margin: 7px 0 0;
+      padding-top: 25px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      color: aliceblue  ;
+    }
+    .start-page {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://i.ibb.co/BLHF5S4/tero-verse-2.png');
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .start-page input[type="text"] {
+      margin-bottom: 20px;
+      padding: 8px;
+      font-size: 18px;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+    .start-page button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4600f6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .player-name {
+   position: absolute;
+   top: 300px;
+   left: 30px; 
+   width: 170px;
+   height: 90px;
+   background-image: url('https://i.ibb.co/5BkKdr0/tero-verse-3.png'); 
+   background-size: cover;
+   border: 5px solid rgba(255, 255, 255, 0.66);
+   border-radius: 10px;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+   font-size: 23px; 
+   color: #ffffff;
+  }
+.game-over {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .game-over h1 {
+      font-size: 40px;
+      color: #ffffff;
+      text-align: center;
+      padding-top: 200px;
+      font-family:Georgia, 'Times New Roman', Times, serif;
+    }
+
+    .game-over p {
+      font-size: 24px;
+      color: #ffffff;
+      text-align: center;
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+
+    }
+
+    .game-over button {
+  padding: 10px 20px;
+  font-size: 24px;
+  background-color:#4800ff ;
+  color: white;
+  font-family:Georgia, 'Times New Roman', Times, serif;
+  border: none;
+  border-radius: 5px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+  .game-over button:hover{
+    background-color: rgb(41, 0, 143);
+  }
+
+
+  </style>
+</head>
+<body>
+  <div class="start-page">
+    <input type="text" id="playerName" placeholder="Enter Your Name">
+    <button onclick="startGame()">Start Game</button>
+  </div>
+    <div class="game-area">
+        <div class="snake" id="snake"></div>
+        <div class="snake" style="left: 20px; top: 0;"></div>
+        <img class="food" id="food" src="https://i.ibb.co/N3hGzXR/Pngtree-apple-fruit-realistic-design-5099732.png" alt="Apple">
+    </div>
+    <div class="player-name" id="playerNameDisplay"></div>
+    <div class="score">
+      <p id="score">0</p>
+      <div class="player-name-score" id="playerNameScore"></div>
+    </div>
+    <div class="game-over" style="display: none;">
+      <h1>Game Over!</h1>
+      <p>Your score is <span id="gameOverScore"></span></p>
+      <button onclick="restartGame()">Play Again</button>
+    </div>    
+  <script>
+    let snake = document.getElementById('snake');
+    let food = document.getElementById('food');
+    let snakeBody = [{ left: 0, top: 0 }, { left: 20, top: 0 }];
+    let foodLeft = 0;
+    let foodTop = 0;
+    let snakeLeft = snakeBody[0].left;
+    let snakeTop = snakeBody[0].top;
+    let direction = 'right';
+    let gameInterval;
+    let score = 0;
+
+
+    
+
+    function startGame() {
+  const playerNameInput = document.getElementById('playerName');
+  const playerName = playerNameInput.value.trim();
+
+  if (playerName === '') {
+    alert('Please enter your name to start the game!');
+  } else {
+
+    const playerNameDisplay = document.getElementById('playerNameDisplay');
+    playerNameDisplay.textContent = playerName;
+
+    document.querySelector('.start-page').style.display = 'none';
+
+    gameInterval = setInterval(moveSnake, 150);
+    generateFood();
+  }
+}
+
+
+  function endGame() {
+  clearInterval(gameInterval);
+  document.querySelector('.game-over').style.display = 'block';
+  document.getElementById('gameOverScore').innerText = score;
+  }
+
+
+  function restartGame() {
+  snakeBody = [{ left: 0, top: 0 }, { left: 20, top: 0 }];
+  snakeLeft = snakeBody[0].left;
+  snakeTop = snakeBody[0].top;
+  direction = 'right';
+  score = 0;
+
+  document.getElementById('score').innerText = score
+  
+  document.querySelector('.start-page').style.display = 'flex';
+
+  document.querySelector('.game-over').style.display = 'none';
+}
+
+
+    function generateFood() {
+      foodLeft = Math.floor(Math.random() * 29) * 20;
+      foodTop = Math.floor(Math.random() * 19) * 20;
+      food.style.left = foodLeft + 'px';
+      food.style.top = foodTop + 'px';
+    }
+
+    function eatFood() {
+    if (snakeLeft === foodLeft && snakeTop === foodTop) {
+        score++;
+        document.getElementById('score').innerText = score;
+        let newBlock = { left: snakeBody[snakeBody.length - 1].left, top: snakeBody[snakeBody.length - 1].top };
+        snakeBody.push(newBlock);
+        generateFood();
+    }
+}
+
+
+    function moveSnake() {
+      switch (direction) {
+        case 'right':
+          snakeLeft += 20;
+          break;
+        case 'left':
+          snakeLeft -= 20;
+          break;
+        case 'up':
+          snakeTop -= 20;
+          break;
+        case 'down':
+          snakeTop += 20;
+          break;
+      }
+
+      if (snakeLeft < 0 || snakeLeft >= 900 || snakeTop < 0 || snakeTop >= 650) {
+        endGame();
+        return;
+      }
+
+      snake.style.left = snakeLeft + 'px';
+      snake.style.top = snakeTop + 'px';
+
+      for (let i = snakeBody.length - 1; i > 0; i--) {
+        snakeBody[i] = { ...snakeBody[i - 1] };
+      }
+
+      snakeBody[0] = { left: snakeLeft, top: snakeTop };
+
+      for (let i = 1; i < snakeBody.length; i++) {
+        if (snakeLeft === snakeBody[i].left && snakeTop === snakeBody[i].top) {
+          endGame();
+          return;
+        }
+      }
+
+      eatFood();
+      updateSnake();
+    }
+
+    function updateSnake() {
+
+      document.querySelectorAll('.snake').forEach(segment => segment.remove());
+
+      for (let i = 0; i < snakeBody.length; i++) {
+        const segment = document.createElement('div');
+        segment.classList.add('snake');
+        segment.style.width = '20px';
+        segment.style.height = '20px';
+        segment.style.backgroundColor = '#00cc00';
+        segment.style.position = 'absolute';
+        segment.style.left = snakeBody[i].left + 'px';
+        segment.style.top = snakeBody[i].top + 'px';
+        segment.style.borderRadius = '50%';
+        document.querySelector('.game-area').appendChild(segment);
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowRight':
+          if (direction !== 'left') {
+            direction = 'right';
+          }
+          break;
+        case 'ArrowLeft':
+          if (direction !== 'right') {
+            direction = 'left';
+          }
+          break;
+        case 'ArrowUp':
+          if (direction !== 'down') {
+            direction = 'up';
+          }
+          break;
+        case 'ArrowDown':
+          if (direction !== 'up') {
+            direction = 'down';
+          }
+          break;
+      }
+    });
+    startGame();
+    
+  </script>
+</body>
+</html>
